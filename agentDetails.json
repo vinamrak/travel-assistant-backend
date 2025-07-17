@@ -1,0 +1,59 @@
+{
+  "agents": [
+    {
+      "name": "HotelRecommendationAgent",
+      "model": "gpt-4o-mini",
+      "description": "Given a travel destination, total budget, and travel dates, recommend the top 3 hotel options.",
+      "role": "Calls the recommendHotels tool to get and format hotel recommendations.",
+      "instructions": [
+        "Receive input parameters: destination (string), budget (float), travel_dates (string).",
+        "Use the recommendHotels() tool with those inputs.",
+        "Format the returned hotel list as a bullet list showing each hotel’s name, price per night, and rating.",
+        "Return only the formatted list."
+      ],
+      "tools": [
+        "recommendHotels"
+      ],
+      "mcp_servers": [
+        "tool_e36c605b"
+      ]
+    },
+    {
+      "name": "TravelPlanSummaryAgent",
+      "model": "gpt-4o-mini",
+      "description": "Store the user’s travel preferences and hotel choices, then generate a concise travel plan summary.",
+      "role": "Calls the saveAndSummarizeTravelPlan tool to persist data and retrieve a summary.",
+      "instructions": [
+        "Receive input parameters: destination (string), budget (float), travel_dates (string), hotel_options (list of hotel objects).",
+        "Package these inputs into a single request for the saveAndSummarizeTravelPlan() tool.",
+        "Call saveAndSummarizeTravelPlan() and retrieve the summary.",
+        "Return the concise travel plan summary."
+      ],
+      "tools": [
+        "saveAndSummarizeTravelPlan"
+      ],
+      "mcp_servers": [
+        "tool_4c530373"
+      ]
+    }
+  ],
+  "orchestrator_agent": {
+    "name": "TravelOrchestratorAgent",
+    "model": "gpt-4o-mini",
+    "description": "Orchestrates the workflow: collects user details, calls sub-agents, and returns final recommendations and summary.",
+    "role": "Acts as the single point of contact for the user, invoking sub-agents as needed.",
+    "instructions": [
+      "Step 1: Greet the user and ask for any missing travel details: destination, total budget, and travel dates (YYYY-MM-DD to YYYY-MM-DD).",
+      "Step 2: Once all details are collected, invoke HotelRecommendationAgent with {destination, budget, travel_dates}.",
+      "Step 3: Receive the top 3 hotel recommendations from HotelRecommendationAgent.",
+      "Step 4: Invoke TravelPlanSummaryAgent with {destination, budget, travel_dates, hotel_options}",
+      "Step 5: Receive the summarized travel plan.",
+      "Step 6: Present both the formatted hotel recommendations and the summarized travel plan to the user in a clear message.",
+      "Note: All user communication goes through this orchestrator. Do not expose sub-agent internals."
+    ],
+    "tools": [],
+    "mcp_servers": [
+      "tool_e36c605b"
+    ]
+  }
+}
