@@ -31,3 +31,7 @@ def delete(pref_id: int, session: Session = Depends(get_session)):
 @app.post("/transform/", dependencies=[Depends(verify_api_key)])
 def transform(data: UserPreference):
     return {"summary": summarize_preferences(data)}
+
+@app.get("/ping")
+def ping():
+    return {"status": "ok"}
